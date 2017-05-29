@@ -1,0 +1,23 @@
+{
+  "name": "search-users-by-lang",
+  "version": "1.0.0",
+  "description": "Search GitHub users by programming language",
+  "author": "Festum Qin <festum@g.pl>",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "test": "/usr/local/lib/node_modules/mocha/bin/mocha",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "restify": "^4.3.0",
+    "nock": "^9.0.13",
+    "mocha": "^3.4.2",
+    "chai": "^4.0.0",
+    "superagent": "3.5.2"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {}
+}
