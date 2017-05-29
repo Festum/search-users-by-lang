@@ -3,26 +3,10 @@ const CONFIG = require('./config.json');
 const GITHUBAPIEP = CONFIG.github.url;
 const GITHUBTOKEN = CONFIG.github.token;
 
-function validFieldFilter(q, param) {
-  if (q.hasOwnProperty('sort'))
-    if (['stars', 'forks', 'updated'].includes(q.sort)) 
-      param.sort = q.sort;
-  if (q.hasOwnProperty('order'))
-    if (['desc', 'asc'].includes(q.order)) 
-      param.order = q.order;
-  if (q.hasOwnProperty('page'))
-    if (q.page>0)
-      param.page = q.page;
-  if (q.hasOwnProperty('per_page')) 
-    if (q.per_page>10)
-      param.per_page = q.per_page;
-  return param;
-}
+let searchUsersByLang = (req, res) => {
 
-function searchUsersByLang(req, res){
-
-  let getUserPromise = function(username){
-    return new Promise(function(resolve, reject) {
+  let getUserPromise = username => {
+    return new Promise((resolve, reject) => {
       getUser(username, (err, user) => {
         if(!err) 
           resolve({ 
@@ -35,8 +19,8 @@ function searchUsersByLang(req, res){
     });
   };
 
-  let getUsersBylangPromise = function(q){
-    return new Promise(function(resolve, reject) {
+  let getUsersBylangPromise = q => {
+    return new Promise((resolve, reject) => {
       getUsersBylang(q, (err, users) => {
         if(!err) {
           let promise = [], profiles =[];
@@ -55,7 +39,7 @@ function searchUsersByLang(req, res){
             console.log(reason);
             reject(reason);
           }).catch(err => {
-            console.log(`Promise Rejected ${err}`);
+            console.error(`Promise Rejected ${err}`);
             reject(err);
           });
         }
@@ -71,35 +55,51 @@ function searchUsersByLang(req, res){
   });
 }
 
-let getUsersBylang = function(q, callback) {
+let validFieldFilter = (q, param) => {
+  if (q.hasOwnProperty('sort'))
+    if (['stars', 'forks', 'updated'].includes(q.sort)) 
+      param.sort = q.sort;
+  if (q.hasOwnProperty('order'))
+    if (['desc', 'asc'].includes(q.order)) 
+      param.order = q.order;
+  if (q.hasOwnProperty('page'))
+    if (q.page>0)
+      param.page = q.page;
+  if (q.hasOwnProperty('per_page')) 
+    if (q.per_page>10)
+      param.per_page = q.per_page;
+  return param;
+}
+
+let getUsersBylang = (q, callback) => {
   request
     .get(`${GITHUBAPIEP}/search/repositories`)
     .query(q)
     .set('Authorization', `token ${GITHUBTOKEN}`)
-    .end(function(err, res) {
+    .end((err, res) => {
       if (!err) {
         let users = [];
-        res.body.items.forEach(function(i) {
+        res.body.items.forEach(i => {
           if (i.owner.type === 'User')
             users.push(i.owner.login);
         });
         callback(null, Array.from(new Set(users)));
       } else {
-        console.log(err);
+        console.error(err);
         callback('Error Occurred!');
       }
     });
 };
 
-let getUser = function(username, callback) {
+let getUser = (username, callback) => {
   request
     .get(`${GITHUBAPIEP}/users/${username}`)
     .set('Authorization', `token ${GITHUBTOKEN}`)
-    .end(function(err, res) {
+    .end((err, res) => {
       if (!err) {
         callback(null, res.body);
       } else {
-        console.log(err);
+        console.error(err);
         callback('Error Occurred!');
       }
     });

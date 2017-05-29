@@ -4,9 +4,10 @@ const search4Users = require('../lib').search4Users;
 const validFieldFilter = require('../lib').validFieldFilter;
 const getUsersBylang = require('../lib').getUsersBylang;
 const getUser = require('../lib').getUser;
+const CONFIG = require('../config.json');
+const GITHUBAPIEP = CONFIG.github.url;
 
-
-describe('Parameters', function() {
+describe('Parameters', () => {
   it('skip invalid arguments', done => {
     let param = validFieldFilter({sort: 'error', order: 'tab', page: 0, per_page: 5000}, {});
     expect(param).to.not.have.property('sort');
@@ -18,14 +19,14 @@ describe('Parameters', function() {
   });
 });
 
-describe('GET user', function() {
+describe('GET user', () => {
   let username = 'Festum';
-  beforeEach(function() {
+  beforeEach(() => {
     var repoResponse = {
         login: "Festum",
         type: "User"
     };
-    nock('https://api.github.com')
+    nock(GITHUBAPIEP)
       .get(`/users/${username}`)
       .reply(200, repoResponse);
   });
@@ -39,8 +40,8 @@ describe('GET user', function() {
   });
 });
 
-describe('GET users in repo', function() {
-   beforeEach(function() {
+describe('GET users in repo', () => {
+   beforeEach(() => {
     var repoResponse = { 
       items:[{ 
         owner: {
@@ -49,12 +50,12 @@ describe('GET users in repo', function() {
        }
       }, { 
       owner: {
-        login: "nanocat",
+        login: "jscat",
         type: "User"
       }
       }]
     };
-    nock('https://api.github.com')
+    nock(GITHUBAPIEP)
       .get('/search/repositories')
       .query(true)
       .reply(200, repoResponse);
@@ -65,7 +66,7 @@ describe('GET users in repo', function() {
     getUsersBylang(q, (err, users) => {
       expect(Array.isArray(users)).to.equal(true);
       expect(users).to.have.length.above(1);
-      users.forEach(function(user) {
+      users.forEach(user => {
         expect(user).to.be.a('string');
       });
       done();
