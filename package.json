@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "server.js",
   "scripts": {
-    "test": "/usr/local/lib/node_modules/mocha/bin/mocha",
+    "test": "./node_modules/mocha/bin/mocha",
     "start": "node server.js"
   },
   "dependencies": {
