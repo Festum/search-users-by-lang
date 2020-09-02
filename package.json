@@ -14,7 +14,7 @@
     "nock": "^9.0.13",
     "mocha": "^3.4.2",
     "chai": "^4.0.0",
-    "superagent": "3.5.2"
+    "superagent": "6.1.0"
   },
   "directories": {
     "test": "test"
